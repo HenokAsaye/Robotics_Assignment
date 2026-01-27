@@ -1,0 +1,77 @@
+# =============================================================================
+# AMCL Configuration
+# Module Owner: Abenezer (Localization)
+#
+# Adaptive Monte Carlo Localization configuration.
+# Used when navigating with a pre-built map.
+# =============================================================================
+
+amcl:
+  ros__parameters:
+    use_sim_time: true
+
+    # ==================== Filter Parameters ====================
+    # Number of particles
+    min_particles: 500
+    max_particles: 2000
+    
+    # Particle filter update thresholds
+    update_min_d: 0.25          # Minimum translation (m) before filter update
+    update_min_a: 0.2           # Minimum rotation (rad) before filter update
+    resample_interval: 1        # Resampling interval
+    
+    # KLD sampling parameters
+    pf_err: 0.05
+    pf_z: 0.99
+
+    # ==================== Laser Model Parameters ====================
+    laser_model_type: "likelihood_field"
+    laser_likelihood_max_dist: 2.0
+    laser_max_range: 12.0
+    laser_min_range: 0.15
+    max_beams: 60
+
+    # Likelihood field model weights
+    z_hit: 0.5
+    z_short: 0.05
+    z_max: 0.05
+    z_rand: 0.5
+    sigma_hit: 0.2
+    lambda_short: 0.1
+
+    # ==================== Odometry Model Parameters ====================
+    robot_model_type: "nav2_amcl::DifferentialMotionModel"
+    
+    # Motion model noise parameters
+    # For differential drive on Ethiopian urban terrain
+    alpha1: 0.2     # Rotation noise from rotation
+    alpha2: 0.2     # Rotation noise from translation
+    alpha3: 0.2     # Translation noise from translation
+    alpha4: 0.2     # Translation noise from rotation
+    alpha5: 0.2     # Translation noise (additional)
+
+    # ==================== Frame Parameters ====================
+    global_frame_id: "map"
+    odom_frame_id: "odom"
+    base_frame_id: "base_footprint"
+    scan_topic: "scan"
+
+    # ==================== Transform Parameters ====================
+    tf_broadcast: true
+    transform_tolerance: 1.0
+
+    # ==================== Recovery Parameters ====================
+    recovery_alpha_fast: 0.0
+    recovery_alpha_slow: 0.0
+
+    # ==================== Initial Pose ====================
+    set_initial_pose: false
+    initial_pose:
+      x: 0.0
+      y: 0.0
+      z: 0.0
+      yaw: 0.0
+
+    # ==================== Misc ====================
+    save_pose_rate: 0.5
+    first_map_only: false

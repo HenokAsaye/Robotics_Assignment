@@ -1,0 +1,58 @@
+<?xml version="1.0"?>
+<!--
+  Material Definitions for Medical Delivery Robot
+  Module Owner: Abel (Modeling)
+  
+  Contains color and material properties for robot visualization.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ==================== RVIZ MATERIALS ==================== -->
+  
+  <!-- Primary Robot Colors -->
+  <material name="white">
+    <color rgba="1.0 1.0 1.0 1.0"/>
+  </material>
+
+  <material name="medbot_blue">
+    <color rgba="0.2 0.4 0.8 1.0"/>
+  </material>
+
+  <material name="medbot_green">
+    <color rgba="0.0 0.7 0.3 1.0"/>
+  </material>
+
+  <material name="dark_grey">
+    <color rgba="0.2 0.2 0.2 1.0"/>
+  </material>
+
+  <material name="light_grey">
+    <color rgba="0.6 0.6 0.6 1.0"/>
+  </material>
+
+  <material name="red">
+    <color rgba="0.9 0.1 0.1 1.0"/>
+  </material>
+
+  <material name="orange">
+    <color rgba="1.0 0.5 0.0 1.0"/>
+  </material>
+
+  <material name="black">
+    <color rgba="0.1 0.1 0.1 1.0"/>
+  </material>
+
+  <!-- Medical Cross Color (Ethiopian Medical Theme) -->
+  <material name="ethiopian_green">
+    <color rgba="0.0 0.6 0.3 1.0"/>
+  </material>
+
+  <material name="ethiopian_yellow">
+    <color rgba="0.98 0.75 0.0 1.0"/>
+  </material>
+
+  <material name="ethiopian_red">
+    <color rgba="0.85 0.1 0.1 1.0"/>
+  </material>
+
+</robot>

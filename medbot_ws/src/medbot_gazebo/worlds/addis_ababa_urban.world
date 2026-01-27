@@ -1,0 +1,756 @@
+<?xml version="1.0" ?>
+<!--
+  Ethiopian Urban Environment - Addis Ababa Style
+  Medical Delivery Robot Simulation World
+  
+  Features:
+  - Urban street layout with intersections
+  - Ethiopian-style buildings and infrastructure
+  - Pedestrian walkways
+  - Traffic elements (minibus taxi stops, traffic lights)
+  - Healthcare facility destinations
+  - Cobblestone and paved road textures
+  - Uneven terrain patches
+-->
+<sdf version="1.7">
+  <world name="addis_ababa_urban">
+    
+    <!-- ==================== PHYSICS ==================== -->
+    <physics type="ode">
+      <max_step_size>0.001</max_step_size>
+      <real_time_factor>1</real_time_factor>
+      <real_time_update_rate>1000</real_time_update_rate>
+      <gravity>0 0 -9.81</gravity>
+    </physics>
+
+    <!-- ==================== SCENE ==================== -->
+    <scene>
+      <ambient>0.6 0.6 0.6 1</ambient>
+      <background>0.7 0.85 1.0 1</background>
+      <shadows>true</shadows>
+    </scene>
+
+    <!-- ==================== LIGHTING ==================== -->
+    <!-- Ethiopian Highland Sun -->
+    <light type="directional" name="sun">
+      <cast_shadows>true</cast_shadows>
+      <pose>0 0 50 0 0 0</pose>
+      <diffuse>0.9 0.9 0.8 1</diffuse>
+      <specular>0.3 0.3 0.3 1</specular>
+      <direction>-0.5 0.3 -1</direction>
+    </light>
+
+    <!-- Ambient fill light -->
+    <light type="point" name="ambient_light">
+      <pose>0 0 15 0 0 0</pose>
+      <diffuse>0.3 0.3 0.35 1</diffuse>
+      <specular>0.1 0.1 0.1 1</specular>
+      <attenuation>
+        <range>100</range>
+        <constant>0.5</constant>
+        <linear>0.01</linear>
+        <quadratic>0.001</quadratic>
+      </attenuation>
+    </light>
+
+    <!-- ==================== GROUND PLANE ==================== -->
+    <model name="ground_plane">
+      <static>true</static>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>200 200</size>
+            </plane>
+          </geometry>
+          <surface>
+            <friction>
+              <ode>
+                <mu>100</mu>
+                <mu2>50</mu2>
+              </ode>
+            </friction>
+          </surface>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <plane>
+              <normal>0 0 1</normal>
+              <size>200 200</size>
+            </plane>
+          </geometry>
+          <material>
+            <ambient>0.5 0.45 0.4 1</ambient>
+            <diffuse>0.6 0.55 0.5 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== MAIN ROAD ==================== -->
+    <model name="main_road">
+      <static>true</static>
+      <pose>0 0 0.01 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>60 8 0.02</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>60 8 0.02</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.2 0.2 0.2 1</ambient>
+            <diffuse>0.25 0.25 0.25 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Road Center Line Markings -->
+    <model name="center_line">
+      <static>true</static>
+      <pose>0 0 0.025 0 0 0</pose>
+      <link name="link">
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>60 0.15 0.01</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>1 1 0.8 1</ambient>
+            <diffuse>1 1 0.6 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== CROSS STREET ==================== -->
+    <model name="cross_street">
+      <static>true</static>
+      <pose>0 0 0.01 0 0 1.5708</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>40 6 0.02</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>40 6 0.02</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.22 0.22 0.22 1</ambient>
+            <diffuse>0.28 0.28 0.28 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== SIDEWALKS ==================== -->
+    <!-- North Sidewalk -->
+    <model name="sidewalk_north">
+      <static>true</static>
+      <pose>0 6 0.05 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>60 3 0.1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>60 3 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.65 0.6 0.55 1</ambient>
+            <diffuse>0.7 0.65 0.6 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- South Sidewalk -->
+    <model name="sidewalk_south">
+      <static>true</static>
+      <pose>0 -6 0.05 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>60 3 0.1</size>
+            </box>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>60 3 0.1</size>
+            </box>
+          </geometry>
+          <material>
+            <ambient>0.65 0.6 0.55 1</ambient>
+            <diffuse>0.7 0.65 0.6 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== HOSPITAL (Delivery Destination) ==================== -->
+    <model name="tikur_anbessa_hospital">
+      <static>true</static>
+      <pose>20 12 0 0 0 0</pose>
+      <link name="link">
+        <!-- Main Building -->
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>15 10 8</size>
+            </box>
+          </geometry>
+          <pose>0 0 4 0 0 0</pose>
+        </collision>
+        <visual name="main_building">
+          <geometry>
+            <box>
+              <size>15 10 8</size>
+            </box>
+          </geometry>
+          <pose>0 0 4 0 0 0</pose>
+          <material>
+            <ambient>0.9 0.9 0.9 1</ambient>
+            <diffuse>0.95 0.95 0.95 1</diffuse>
+          </material>
+        </visual>
+        <!-- Red Cross Symbol -->
+        <visual name="cross_h">
+          <geometry>
+            <box>
+              <size>0.1 2 0.6</size>
+            </box>
+          </geometry>
+          <pose>-7.55 0 6 0 0 0</pose>
+          <material>
+            <ambient>0.9 0.1 0.1 1</ambient>
+            <diffuse>0.95 0.15 0.15 1</diffuse>
+          </material>
+        </visual>
+        <visual name="cross_v">
+          <geometry>
+            <box>
+              <size>0.1 0.6 2</size>
+            </box>
+          </geometry>
+          <pose>-7.55 0 6 0 0 0</pose>
+          <material>
+            <ambient>0.9 0.1 0.1 1</ambient>
+            <diffuse>0.95 0.15 0.15 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== CLINIC (Secondary Destination) ==================== -->
+    <model name="health_clinic">
+      <static>true</static>
+      <pose>-18 12 0 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>8 6 4</size>
+            </box>
+          </geometry>
+          <pose>0 0 2 0 0 0</pose>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>8 6 4</size>
+            </box>
+          </geometry>
+          <pose>0 0 2 0 0 0</pose>
+          <material>
+            <ambient>0.85 0.9 0.85 1</ambient>
+            <diffuse>0.9 0.95 0.9 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== PHARMACY ==================== -->
+    <model name="pharmacy">
+      <static>true</static>
+      <pose>-8 -12 0 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>6 5 3.5</size>
+            </box>
+          </geometry>
+          <pose>0 0 1.75 0 0 0</pose>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>6 5 3.5</size>
+            </box>
+          </geometry>
+          <pose>0 0 1.75 0 0 0</pose>
+          <material>
+            <ambient>0.2 0.7 0.3 1</ambient>
+            <diffuse>0.25 0.8 0.35 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== COMMERCIAL BUILDINGS ==================== -->
+    <!-- Ethiopian Style Shop 1 -->
+    <model name="shop_1">
+      <static>true</static>
+      <pose>8 -12 0 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>5 4 3</size>
+            </box>
+          </geometry>
+          <pose>0 0 1.5 0 0 0</pose>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>5 4 3</size>
+            </box>
+          </geometry>
+          <pose>0 0 1.5 0 0 0</pose>
+          <material>
+            <ambient>0.8 0.6 0.4 1</ambient>
+            <diffuse>0.85 0.65 0.45 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Ethiopian Style Shop 2 -->
+    <model name="shop_2">
+      <static>true</static>
+      <pose>16 -12 0 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>6 4 4</size>
+            </box>
+          </geometry>
+          <pose>0 0 2 0 0 0</pose>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>6 4 4</size>
+            </box>
+          </geometry>
+          <pose>0 0 2 0 0 0</pose>
+          <material>
+            <ambient>0.7 0.75 0.8 1</ambient>
+            <diffuse>0.75 0.8 0.85 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== MINIBUS TAXI STOP ==================== -->
+    <model name="minibus_stop">
+      <static>true</static>
+      <pose>-5 4.5 0 0 0 0</pose>
+      <link name="link">
+        <!-- Shelter Roof -->
+        <visual name="roof">
+          <geometry>
+            <box>
+              <size>4 2 0.1</size>
+            </box>
+          </geometry>
+          <pose>0 0 2.5 0 0 0</pose>
+          <material>
+            <ambient>0.3 0.5 0.7 1</ambient>
+            <diffuse>0.35 0.55 0.75 1</diffuse>
+          </material>
+        </visual>
+        <!-- Support Poles -->
+        <visual name="pole_1">
+          <geometry>
+            <cylinder>
+              <radius>0.05</radius>
+              <length>2.5</length>
+            </cylinder>
+          </geometry>
+          <pose>-1.8 0.8 1.25 0 0 0</pose>
+          <material>
+            <ambient>0.4 0.4 0.4 1</ambient>
+          </material>
+        </visual>
+        <visual name="pole_2">
+          <geometry>
+            <cylinder>
+              <radius>0.05</radius>
+              <length>2.5</length>
+            </cylinder>
+          </geometry>
+          <pose>1.8 0.8 1.25 0 0 0</pose>
+          <material>
+            <ambient>0.4 0.4 0.4 1</ambient>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>4 2 2.5</size>
+            </box>
+          </geometry>
+          <pose>0 0 1.25 0 0 0</pose>
+        </collision>
+      </link>
+    </model>
+
+    <!-- ==================== STATIC OBSTACLES ==================== -->
+    <!-- Parked Minibus Taxi (Blue) -->
+    <model name="minibus_taxi">
+      <static>true</static>
+      <pose>-10 3.5 0 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>4.5 1.8 2</size>
+            </box>
+          </geometry>
+          <pose>0 0 1 0 0 0</pose>
+        </collision>
+        <visual name="body">
+          <geometry>
+            <box>
+              <size>4.5 1.8 1.5</size>
+            </box>
+          </geometry>
+          <pose>0 0 0.9 0 0 0</pose>
+          <material>
+            <ambient>0.1 0.3 0.8 1</ambient>
+            <diffuse>0.15 0.35 0.85 1</diffuse>
+          </material>
+        </visual>
+        <visual name="roof">
+          <geometry>
+            <box>
+              <size>3.5 1.6 0.4</size>
+            </box>
+          </geometry>
+          <pose>-0.3 0 1.85 0 0 0</pose>
+          <material>
+            <ambient>0.9 0.9 0.9 1</ambient>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Street Vendor Cart -->
+    <model name="vendor_cart">
+      <static>true</static>
+      <pose>5 5.5 0 0 0 0.3</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>1.5 0.8 1.2</size>
+            </box>
+          </geometry>
+          <pose>0 0 0.6 0 0 0</pose>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>1.5 0.8 1.2</size>
+            </box>
+          </geometry>
+          <pose>0 0 0.6 0 0 0</pose>
+          <material>
+            <ambient>0.6 0.4 0.2 1</ambient>
+            <diffuse>0.7 0.5 0.3 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Traffic Cone 1 -->
+    <model name="traffic_cone_1">
+      <static>true</static>
+      <pose>3 -3.5 0 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <cone>
+              <radius>0.15</radius>
+              <length>0.5</length>
+            </cone>
+          </geometry>
+          <pose>0 0 0.25 0 0 0</pose>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <cone>
+              <radius>0.15</radius>
+              <length>0.5</length>
+            </cone>
+          </geometry>
+          <pose>0 0 0.25 0 0 0</pose>
+          <material>
+            <ambient>1 0.5 0 1</ambient>
+            <diffuse>1 0.55 0.05 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Traffic Cone 2 -->
+    <model name="traffic_cone_2">
+      <static>true</static>
+      <pose>3.5 -3 0 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <cone>
+              <radius>0.15</radius>
+              <length>0.5</length>
+            </cone>
+          </geometry>
+          <pose>0 0 0.25 0 0 0</pose>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <cone>
+              <radius>0.15</radius>
+              <length>0.5</length>
+            </cone>
+          </geometry>
+          <pose>0 0 0.25 0 0 0</pose>
+          <material>
+            <ambient>1 0.5 0 1</ambient>
+            <diffuse>1 0.55 0.05 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Pothole (Terrain Challenge) -->
+    <model name="pothole">
+      <static>true</static>
+      <pose>-3 1 -0.08 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <cylinder>
+              <radius>0.4</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>0.4</radius>
+              <length>0.1</length>
+            </cylinder>
+          </geometry>
+          <material>
+            <ambient>0.15 0.15 0.15 1</ambient>
+            <diffuse>0.1 0.1 0.1 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== PEDESTRIAN ACTORS ==================== -->
+    <!-- Static Pedestrian 1 -->
+    <model name="pedestrian_1">
+      <static>true</static>
+      <pose>2 6.5 0 0 0 0.5</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <cylinder>
+              <radius>0.3</radius>
+              <length>1.7</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 0.85 0 0 0</pose>
+        </collision>
+        <visual name="body">
+          <geometry>
+            <cylinder>
+              <radius>0.25</radius>
+              <length>1.2</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 0.8 0 0 0</pose>
+          <material>
+            <ambient>0.3 0.5 0.3 1</ambient>
+          </material>
+        </visual>
+        <visual name="head">
+          <geometry>
+            <sphere>
+              <radius>0.15</radius>
+            </sphere>
+          </geometry>
+          <pose>0 0 1.55 0 0 0</pose>
+          <material>
+            <ambient>0.6 0.45 0.35 1</ambient>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Static Pedestrian 2 -->
+    <model name="pedestrian_2">
+      <static>true</static>
+      <pose>-12 6.5 0 0 0 -0.3</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <cylinder>
+              <radius>0.3</radius>
+              <length>1.7</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 0.85 0 0 0</pose>
+        </collision>
+        <visual name="body">
+          <geometry>
+            <cylinder>
+              <radius>0.25</radius>
+              <length>1.2</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 0.8 0 0 0</pose>
+          <material>
+            <ambient>0.7 0.3 0.3 1</ambient>
+          </material>
+        </visual>
+        <visual name="head">
+          <geometry>
+            <sphere>
+              <radius>0.15</radius>
+            </sphere>
+          </geometry>
+          <pose>0 0 1.55 0 0 0</pose>
+          <material>
+            <ambient>0.6 0.45 0.35 1</ambient>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== TREES (Ethiopian Vegetation) ==================== -->
+    <model name="tree_1">
+      <static>true</static>
+      <pose>-20 8 0 0 0 0</pose>
+      <link name="link">
+        <visual name="trunk">
+          <geometry>
+            <cylinder>
+              <radius>0.2</radius>
+              <length>3</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 1.5 0 0 0</pose>
+          <material>
+            <ambient>0.4 0.25 0.1 1</ambient>
+          </material>
+        </visual>
+        <visual name="canopy">
+          <geometry>
+            <sphere>
+              <radius>2</radius>
+            </sphere>
+          </geometry>
+          <pose>0 0 4 0 0 0</pose>
+          <material>
+            <ambient>0.1 0.5 0.15 1</ambient>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <cylinder>
+              <radius>0.3</radius>
+              <length>3</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 1.5 0 0 0</pose>
+        </collision>
+      </link>
+    </model>
+
+    <model name="tree_2">
+      <static>true</static>
+      <pose>12 8 0 0 0 0</pose>
+      <link name="link">
+        <visual name="trunk">
+          <geometry>
+            <cylinder>
+              <radius>0.15</radius>
+              <length>2.5</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 1.25 0 0 0</pose>
+          <material>
+            <ambient>0.4 0.25 0.1 1</ambient>
+          </material>
+        </visual>
+        <visual name="canopy">
+          <geometry>
+            <sphere>
+              <radius>1.5</radius>
+            </sphere>
+          </geometry>
+          <pose>0 0 3.5 0 0 0</pose>
+          <material>
+            <ambient>0.15 0.55 0.2 1</ambient>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <cylinder>
+              <radius>0.25</radius>
+              <length>2.5</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 1.25 0 0 0</pose>
+        </collision>
+      </link>
+    </model>
+
+    <!-- ==================== ROBOT SPAWN POINT ==================== -->
+    <!-- The robot will spawn at the origin, on the main road -->
+
+  </world>
+</sdf>

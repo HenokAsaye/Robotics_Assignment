@@ -1,0 +1,23 @@
+# Mission Configuration
+# Module Owner: Team Collaboration
+
+# Delivery Manager Settings
+delivery_manager:
+  ros__parameters:
+    delivery_timeout: 300.0  # seconds
+    loading_time: 5.0        # seconds
+    unloading_time: 5.0      # seconds
+    auto_return_home: true
+
+# Obstacle Detector Settings
+obstacle_detector:
+  ros__parameters:
+    detection_range: 5.0       # meters
+    cluster_threshold: 0.3     # meters
+    min_cluster_size: 3        # points
+
+# Emergency Stop Settings
+emergency_stop:
+  ros__parameters:
+    min_obstacle_distance: 0.25  # meters
+    emergency_enabled: true

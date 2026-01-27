@@ -1,0 +1,37 @@
+<?xml version="1.0"?>
+<?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
+<package format="3">
+  <name>medbot_navigation</name>
+  <version>1.0.0</version>
+  <description>
+    Navigation configuration package for Medical Delivery Robot.
+    Module Owner: Henok (Navigation)
+    
+    Contains Nav2 stack configurations including:
+    - Costmap parameters (global and local)
+    - Planner configurations (NavFn, Smac, etc.)
+    - Controller configurations (DWB, TEB, etc.)
+    - Behavior tree configurations
+  </description>
+  <maintainer email="henok@ethio-medbot.com">Henok</maintainer>
+  <license>Apache-2.0</license>
+
+  <buildtool_depend>ament_cmake</buildtool_depend>
+
+  <exec_depend>nav2_bringup</exec_depend>
+  <exec_depend>nav2_bt_navigator</exec_depend>
+  <exec_depend>nav2_controller</exec_depend>
+  <exec_depend>nav2_planner</exec_depend>
+  <exec_depend>nav2_recoveries</exec_depend>
+  <exec_depend>nav2_waypoint_follower</exec_depend>
+  <exec_depend>nav2_lifecycle_manager</exec_depend>
+  <exec_depend>nav2_map_server</exec_depend>
+  <exec_depend>nav2_costmap_2d</exec_depend>
+
+  <test_depend>ament_lint_auto</test_depend>
+  <test_depend>ament_lint_common</test_depend>
+
+  <export>
+    <build_type>ament_cmake</build_type>
+  </export>
+</package>

@@ -1,0 +1,220 @@
+<?xml version="1.0"?>
+<!--
+  Robot Core Structure - Differential Drive Base
+  Module Owner: Abel (Modeling)
+  
+  Defines the main chassis, wheels, and caster for the delivery robot.
+  Designed for Ethiopian urban terrain navigation.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+
+  <!-- ==================== ROBOT PARAMETERS ==================== -->
+  
+  <!-- Chassis Dimensions -->
+  <xacro:property name="chassis_length" value="0.50"/>
+  <xacro:property name="chassis_width" value="0.35"/>
+  <xacro:property name="chassis_height" value="0.15"/>
+  <xacro:property name="chassis_mass" value="15.0"/>
+  
+  <!-- Wheel Parameters -->
+  <xacro:property name="wheel_radius" value="0.08"/>
+  <xacro:property name="wheel_width" value="0.04"/>
+  <xacro:property name="wheel_mass" value="1.0"/>
+  <xacro:property name="wheel_separation" value="0.40"/>
+  <xacro:property name="wheel_offset_x" value="-0.05"/>
+  <xacro:property name="wheel_offset_z" value="0.0"/>
+  
+  <!-- Caster Wheel -->
+  <xacro:property name="caster_radius" value="0.04"/>
+  <xacro:property name="caster_mass" value="0.5"/>
+  <xacro:property name="caster_offset_x" value="0.18"/>
+  
+  <!-- Delivery Compartment -->
+  <xacro:property name="compartment_length" value="0.35"/>
+  <xacro:property name="compartment_width" value="0.30"/>
+  <xacro:property name="compartment_height" value="0.25"/>
+
+  <!-- ==================== INERTIA MACROS ==================== -->
+  
+  <xacro:macro name="box_inertia" params="m w h d">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia ixx="${(m/12)*(h*h+d*d)}" ixy="0" ixz="0"
+               iyy="${(m/12)*(w*w+d*d)}" iyz="0"
+               izz="${(m/12)*(w*w+h*h)}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="cylinder_inertia" params="m r h">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia ixx="${(m/12)*(3*r*r+h*h)}" ixy="0" ixz="0"
+               iyy="${(m/12)*(3*r*r+h*h)}" iyz="0"
+               izz="${(m/2)*r*r}"/>
+    </inertial>
+  </xacro:macro>
+
+  <xacro:macro name="sphere_inertia" params="m r">
+    <inertial>
+      <mass value="${m}"/>
+      <inertia ixx="${(2/5)*m*r*r}" ixy="0" ixz="0"
+               iyy="${(2/5)*m*r*r}" iyz="0"
+               izz="${(2/5)*m*r*r}"/>
+    </inertial>
+  </xacro:macro>
+
+  <!-- ==================== WHEEL MACRO ==================== -->
+  
+  <xacro:macro name="wheel" params="prefix side reflect">
+    <link name="${prefix}_wheel_link">
+      <visual>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+        <material name="dark_grey"/>
+      </visual>
+      <collision>
+        <geometry>
+          <cylinder radius="${wheel_radius}" length="${wheel_width}"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="${pi/2} 0 0"/>
+      </collision>
+      <xacro:cylinder_inertia m="${wheel_mass}" r="${wheel_radius}" h="${wheel_width}"/>
+    </link>
+
+    <joint name="${prefix}_wheel_joint" type="continuous">
+      <parent link="base_link"/>
+      <child link="${prefix}_wheel_link"/>
+      <origin xyz="${wheel_offset_x} ${reflect * wheel_separation/2} ${wheel_radius}" rpy="0 0 0"/>
+      <axis xyz="0 1 0"/>
+      <dynamics damping="0.2" friction="0.5"/>
+    </joint>
+
+    <!-- Gazebo friction settings for wheels -->
+    <gazebo reference="${prefix}_wheel_link">
+      <mu1>1.0</mu1>
+      <mu2>1.0</mu2>
+      <kp>500000.0</kp>
+      <kd>10.0</kd>
+      <material>Gazebo/DarkGrey</material>
+    </gazebo>
+  </xacro:macro>
+
+  <!-- ==================== ROBOT CORE MACRO ==================== -->
+  
+  <xacro:macro name="robot_core">
+    
+    <!-- Base Footprint (Ground Plane Reference) -->
+    <link name="base_footprint"/>
+
+    <!-- Base Link (Main Chassis) -->
+    <link name="base_link">
+      <visual>
+        <geometry>
+          <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
+        </geometry>
+        <origin xyz="0 0 ${chassis_height/2 + wheel_radius}" rpy="0 0 0"/>
+        <material name="medbot_blue"/>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="${chassis_length} ${chassis_width} ${chassis_height}"/>
+        </geometry>
+        <origin xyz="0 0 ${chassis_height/2 + wheel_radius}" rpy="0 0 0"/>
+      </collision>
+      <xacro:box_inertia m="${chassis_mass}" w="${chassis_width}" h="${chassis_height}" d="${chassis_length}"/>
+    </link>
+
+    <joint name="base_footprint_joint" type="fixed">
+      <parent link="base_footprint"/>
+      <child link="base_link"/>
+      <origin xyz="0 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Delivery Compartment -->
+    <link name="delivery_compartment_link">
+      <visual>
+        <geometry>
+          <box size="${compartment_length} ${compartment_width} ${compartment_height}"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <material name="ethiopian_green"/>
+      </visual>
+      <collision>
+        <geometry>
+          <box size="${compartment_length} ${compartment_width} ${compartment_height}"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+      </collision>
+      <xacro:box_inertia m="2.0" w="${compartment_width}" h="${compartment_height}" d="${compartment_length}"/>
+    </link>
+
+    <joint name="delivery_compartment_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="delivery_compartment_link"/>
+      <origin xyz="-0.05 0 ${chassis_height + wheel_radius + compartment_height/2}" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Medical Cross Marker (Visual Only) -->
+    <link name="medical_cross_link">
+      <visual>
+        <geometry>
+          <box size="0.02 0.12 0.12"/>
+        </geometry>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
+        <material name="ethiopian_red"/>
+      </visual>
+    </link>
+
+    <joint name="medical_cross_joint" type="fixed">
+      <parent link="delivery_compartment_link"/>
+      <child link="medical_cross_link"/>
+      <origin xyz="${compartment_length/2 + 0.011} 0 0" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Drive Wheels -->
+    <xacro:wheel prefix="left" side="left" reflect="1"/>
+    <xacro:wheel prefix="right" side="right" reflect="-1"/>
+
+    <!-- Front Caster Wheel -->
+    <link name="caster_wheel_link">
+      <visual>
+        <geometry>
+          <sphere radius="${caster_radius}"/>
+        </geometry>
+        <material name="light_grey"/>
+      </visual>
+      <collision>
+        <geometry>
+          <sphere radius="${caster_radius}"/>
+        </geometry>
+      </collision>
+      <xacro:sphere_inertia m="${caster_mass}" r="${caster_radius}"/>
+    </link>
+
+    <joint name="caster_wheel_joint" type="fixed">
+      <parent link="base_link"/>
+      <child link="caster_wheel_link"/>
+      <origin xyz="${caster_offset_x} 0 ${caster_radius}" rpy="0 0 0"/>
+    </joint>
+
+    <!-- Caster Gazebo Properties -->
+    <gazebo reference="caster_wheel_link">
+      <mu1>0.001</mu1>
+      <mu2>0.001</mu2>
+      <material>Gazebo/Grey</material>
+    </gazebo>
+
+    <!-- Base Link Gazebo Properties -->
+    <gazebo reference="base_link">
+      <material>Gazebo/Blue</material>
+    </gazebo>
+
+    <gazebo reference="delivery_compartment_link">
+      <material>Gazebo/Green</material>
+    </gazebo>
+
+  </xacro:macro>
+
+</robot>

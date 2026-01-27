@@ -1,0 +1,39 @@
+# Git ignore for ROS 2 workspace
+
+# Build directories
+build/
+install/
+log/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+*.egg
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# ROS specific
+*.bag
+*.db3
+*.log
+
+# Gazebo
+*.world.backup
+
+# Temporary files
+*.tmp
+*.temp

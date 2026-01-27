@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<!--
+  Medical Delivery Robot URDF - Main File
+  Module Owner: Abel (Modeling)
+  
+  This is the main robot description file that includes all components.
+  The robot is a differential drive platform with LiDAR and Camera sensors.
+-->
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro" name="medbot">
+
+  <!-- ==================== ARGUMENTS ==================== -->
+  <xacro:arg name="use_sim" default="true"/>
+  <xacro:arg name="use_ros2_control" default="true"/>
+
+  <!-- ==================== INCLUDES ==================== -->
+  <xacro:include filename="$(find medbot_description)/urdf/materials.xacro"/>
+  <xacro:include filename="$(find medbot_description)/urdf/robot_core.xacro"/>
+  <xacro:include filename="$(find medbot_description)/urdf/sensors/lidar.xacro"/>
+  <xacro:include filename="$(find medbot_description)/urdf/sensors/camera.xacro"/>
+  <xacro:include filename="$(find medbot_description)/urdf/sensors/imu.xacro"/>
+  <xacro:include filename="$(find medbot_description)/urdf/gazebo_control.xacro"/>
+
+  <!-- ==================== ROBOT ASSEMBLY ==================== -->
+  
+  <!-- Base Robot Structure -->
+  <xacro:robot_core/>
+
+  <!-- Sensor Suite -->
+  <xacro:lidar_sensor parent="base_link">
+    <origin xyz="0.15 0 0.30" rpy="0 0 0"/>
+  </xacro:lidar_sensor>
+
+  <xacro:camera_sensor parent="base_link">
+    <origin xyz="0.20 0 0.15" rpy="0 0 0"/>
+  </xacro:camera_sensor>
+
+  <xacro:imu_sensor parent="base_link">
+    <origin xyz="0 0 0.1" rpy="0 0 0"/>
+  </xacro:imu_sensor>
+
+  <!-- Gazebo Control Plugin -->
+  <xacro:gazebo_control use_sim="$(arg use_sim)"/>
+
+</robot>
