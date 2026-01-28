@@ -43,11 +43,14 @@ def generate_launch_description():
     default_world = os.path.join(
         get_package_share_directory('medbot_gazebo'),
         'worlds',
-        'addis_ababa_urban.world'
+        'simple_urban.world'
     )
 
     # RViz config
     rviz_config = os.path.join(pkg_bringup, 'rviz', 'navigation.rviz')
+
+    # Nav2 params
+    nav2_params = os.path.join(pkg_navigation, 'config', 'nav2_params.yaml')
 
     return LaunchDescription([
         # ==================== ARGUMENTS ====================
@@ -116,7 +119,8 @@ def generate_launch_description():
             ),
             condition=IfCondition(nav),
             launch_arguments={
-                'use_sim_time': use_sim_time
+                'use_sim_time': use_sim_time,
+                'params_file': nav2_params
             }.items()
         ),
 

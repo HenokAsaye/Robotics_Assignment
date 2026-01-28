@@ -11,6 +11,7 @@ from launch.actions import DeclareLaunchArgument, IncludeLaunchDescription, SetE
 from launch.launch_description_sources import PythonLaunchDescriptionSource
 from launch.substitutions import LaunchConfiguration, Command
 from launch_ros.actions import Node
+from launch_ros.parameter_descriptions import ParameterValue
 
 
 def generate_launch_description():
@@ -27,13 +28,14 @@ def generate_launch_description():
     z_pose = LaunchConfiguration('z_pose', default='0.1')
 
     # World file path
-    world_file = os.path.join(pkg_gazebo, 'worlds', 'addis_ababa_urban.world')
+    world_file = os.path.join(pkg_gazebo, 'worlds', 'simple_urban.world')
 
     # Robot description
     robot_description_content = Command([
         'xacro ', os.path.join(pkg_description, 'urdf', 'medbot.urdf.xacro'),
         ' use_sim:=true'
     ])
+    robot_description = ParameterValue(robot_description_content, value_type=str)
 
     # Set Gazebo model path
     gazebo_model_path = SetEnvironmentVariable(
@@ -94,7 +96,7 @@ def generate_launch_description():
             name='robot_state_publisher',
             output='screen',
             parameters=[{
-                'robot_description': robot_description_content,
+                'robot_description': robot_description,
                 'use_sim_time': use_sim_time
             }]
         ),

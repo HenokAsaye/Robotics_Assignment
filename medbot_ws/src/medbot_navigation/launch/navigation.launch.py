@@ -20,13 +20,13 @@ def generate_launch_description():
     # Package directory
     pkg_navigation = get_package_share_directory('medbot_navigation')
 
+    # Default params file
+    default_params = os.path.join(pkg_navigation, 'config', 'nav2_params.yaml')
+
     # Launch configurations
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
     autostart = LaunchConfiguration('autostart', default='true')
-    params_file = LaunchConfiguration('params_file')
-    
-    # Default params file
-    default_params = os.path.join(pkg_navigation, 'config', 'nav2_params.yaml')
+    params_file = LaunchConfiguration('params_file', default=default_params)
 
     # Create substituted parameters
     param_substitutions = {
