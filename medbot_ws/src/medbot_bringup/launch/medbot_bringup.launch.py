@@ -1,10 +1,15 @@
 #!/usr/bin/env python3
 """
 Complete System Bringup Launch File
-Launches the full simulation with SLAM and Navigation.
+Launches the full simulation with SLAM, Navigation, EKF, and Mission Control.
 
 This is the main entry point for running the complete system.
 Team members can use this to test integrated functionality.
+
+Usage:
+    ros2 launch medbot_bringup medbot_bringup.launch.py
+    ros2 launch medbot_bringup medbot_bringup.launch.py slam:=false  # Use pre-built map
+    ros2 launch medbot_bringup medbot_bringup.launch.py mission:=false  # Without mission control
 """
 
 import os
@@ -23,12 +28,15 @@ def generate_launch_description():
     pkg_gazebo = get_package_share_directory('medbot_gazebo')
     pkg_navigation = get_package_share_directory('medbot_navigation')
     pkg_localization = get_package_share_directory('medbot_localization')
+    pkg_mission = get_package_share_directory('medbot_mission')
 
     # Launch configurations
     use_sim_time = LaunchConfiguration('use_sim_time', default='true')
     slam = LaunchConfiguration('slam', default='true')
     nav = LaunchConfiguration('nav', default='true')
     rviz = LaunchConfiguration('rviz', default='true')
+    mission = LaunchConfiguration('mission', default='true')
+    ekf = LaunchConfiguration('ekf', default='true')
     world = LaunchConfiguration('world')
 
     # Default world file
@@ -68,6 +76,16 @@ def generate_launch_description():
             default_value=default_world,
             description='World file for Gazebo simulation'
         ),
+        DeclareLaunchArgument(
+            'mission',
+            default_value='true',
+            description='Launch mission control nodes (delivery manager, obstacle detector)'
+        ),
+        DeclareLaunchArgument(
+            'ekf',
+            default_value='true',
+            description='Launch EKF for sensor fusion (odometry + IMU)'
+        ),
 
         # ==================== GAZEBO SIMULATION ====================
         IncludeLaunchDescription(
@@ -97,6 +115,28 @@ def generate_launch_description():
                 os.path.join(pkg_navigation, 'launch', 'navigation.launch.py')
             ),
             condition=IfCondition(nav),
+            launch_arguments={
+                'use_sim_time': use_sim_time
+            }.items()
+        ),
+
+        # ==================== EKF SENSOR FUSION ====================
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(pkg_localization, 'launch', 'ekf.launch.py')
+            ),
+            condition=IfCondition(ekf),
+            launch_arguments={
+                'use_sim_time': use_sim_time
+            }.items()
+        ),
+
+        # ==================== MISSION CONTROL ====================
+        IncludeLaunchDescription(
+            PythonLaunchDescriptionSource(
+                os.path.join(pkg_mission, 'launch', 'mission.launch.py')
+            ),
+            condition=IfCondition(mission),
             launch_arguments={
                 'use_sim_time': use_sim_time
             }.items()

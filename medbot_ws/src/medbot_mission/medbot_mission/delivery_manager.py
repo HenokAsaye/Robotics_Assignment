@@ -30,6 +30,7 @@ from visualization_msgs.msg import Marker, MarkerArray
 from enum import Enum
 from dataclasses import dataclass
 from typing import List, Optional
+from rclpy.timer import Timer
 import json
 import math
 
@@ -100,6 +101,10 @@ class DeliveryManager(Node):
         self.completed_deliveries: List[str] = []
         self.current_pose: Optional[PoseStamped] = None
         self.is_navigation_active = False
+
+        # One-shot timer tracking (to prevent repeated callbacks)
+        self._loading_timer: Optional[Timer] = None
+        self._unloading_timer: Optional[Timer] = None
         
         # Parameters
         self.declare_parameter('delivery_timeout', 300.0)  # 5 minutes
@@ -282,29 +287,43 @@ class DeliveryManager(Node):
         """Handle navigation result"""
         self.is_navigation_active = False
         result = future.result().result
-        
+
         if self.current_state == DeliveryState.EN_ROUTE_PICKUP:
             self.get_logger().info('Arrived at pickup location!')
             self.set_state(DeliveryState.AT_PICKUP)
-            # Simulate loading
-            self.create_timer(
-                self.loading_time, self.loading_complete,
+            # Simulate loading with one-shot timer
+            self._loading_timer = self.create_timer(
+                self.loading_time, self._on_loading_timer,
                 callback_group=self.callback_group
             )
-            
+
         elif self.current_state == DeliveryState.EN_ROUTE_DELIVERY:
             self.get_logger().info('Arrived at delivery location!')
             self.set_state(DeliveryState.AT_DELIVERY)
-            # Simulate unloading
-            self.create_timer(
-                self.unloading_time, self.unloading_complete,
+            # Simulate unloading with one-shot timer
+            self._unloading_timer = self.create_timer(
+                self.unloading_time, self._on_unloading_timer,
                 callback_group=self.callback_group
             )
-            
+
         elif self.current_state == DeliveryState.RETURNING:
             self.get_logger().info('Returned to home base.')
             self.set_state(DeliveryState.IDLE)
             self.process_next_delivery()
+
+    def _on_loading_timer(self):
+        """One-shot timer callback for loading - cancels itself after first call"""
+        if self._loading_timer is not None:
+            self._loading_timer.cancel()
+            self._loading_timer = None
+        self.loading_complete()
+
+    def _on_unloading_timer(self):
+        """One-shot timer callback for unloading - cancels itself after first call"""
+        if self._unloading_timer is not None:
+            self._unloading_timer.cancel()
+            self._unloading_timer = None
+        self.unloading_complete()
 
     def loading_complete(self):
         """Called when loading is complete"""

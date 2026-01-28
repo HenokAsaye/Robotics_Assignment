@@ -31,10 +31,11 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
       </collision>
       <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
         <mass value="${lidar_mass}"/>
-        <inertia ixx="${(lidar_mass/12)*(3*lidar_radius*lidar_radius+lidar_height*lidar_height)}" 
+        <inertia ixx="${(lidar_mass/12)*(3*lidar_radius*lidar_radius+lidar_height*lidar_height)}"
                  ixy="0" ixz="0"
-                 iyy="${(lidar_mass/12)*(3*lidar_radius*lidar_radius+lidar_height*lidar_height)}" 
+                 iyy="${(lidar_mass/12)*(3*lidar_radius*lidar_radius+lidar_height*lidar_height)}"
                  iyz="0"
                  izz="${(lidar_mass/2)*lidar_radius*lidar_radius}"/>
       </inertial>

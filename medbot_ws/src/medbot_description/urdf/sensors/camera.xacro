@@ -30,6 +30,7 @@
         <origin xyz="0 0 0" rpy="0 0 0"/>
       </collision>
       <inertial>
+        <origin xyz="0 0 0" rpy="0 0 0"/>
         <mass value="${camera_mass}"/>
         <inertia ixx="${(camera_mass/12)*(camera_size*camera_size*5)}" ixy="0" ixz="0"
                  iyy="${(camera_mass/12)*(camera_size*camera_size*2)}" iyz="0"

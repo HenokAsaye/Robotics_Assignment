@@ -1,20 +1,22 @@
 <?xml version="1.0" ?>
 <!--
   Ethiopian Urban Environment - Addis Ababa Style
-  Medical Delivery Robot Simulation World
-  
+  Medical Delivery Robot Simulation World - Enhanced Version
+
   Features:
   - Urban street layout with intersections
   - Ethiopian-style buildings and infrastructure
-  - Pedestrian walkways
+  - DYNAMIC pedestrian actors (walking)
+  - Bajaj (three-wheeler taxi) models
   - Traffic elements (minibus taxi stops, traffic lights)
   - Healthcare facility destinations
-  - Cobblestone and paved road textures
-  - Uneven terrain patches
+  - Street vendors and market obstacles
+  - Uneven terrain patches and potholes
+  - Realistic Ethiopian urban chaos simulation
 -->
 <sdf version="1.7">
   <world name="addis_ababa_urban">
-    
+
     <!-- ==================== PHYSICS ==================== -->
     <physics type="ode">
       <max_step_size>0.001</max_step_size>
@@ -291,6 +293,31 @@
             <diffuse>0.9 0.95 0.9 1</diffuse>
           </material>
         </visual>
+        <!-- Green Cross for Clinic -->
+        <visual name="clinic_cross_h">
+          <geometry>
+            <box>
+              <size>0.1 1.2 0.4</size>
+            </box>
+          </geometry>
+          <pose>-4.05 0 3.2 0 0 0</pose>
+          <material>
+            <ambient>0.0 0.7 0.2 1</ambient>
+            <diffuse>0.0 0.8 0.25 1</diffuse>
+          </material>
+        </visual>
+        <visual name="clinic_cross_v">
+          <geometry>
+            <box>
+              <size>0.1 0.4 1.2</size>
+            </box>
+          </geometry>
+          <pose>-4.05 0 3.2 0 0 0</pose>
+          <material>
+            <ambient>0.0 0.7 0.2 1</ambient>
+            <diffuse>0.0 0.8 0.25 1</diffuse>
+          </material>
+        </visual>
       </link>
     </model>
 
@@ -433,8 +460,114 @@
       </link>
     </model>
 
-    <!-- ==================== STATIC OBSTACLES ==================== -->
-    <!-- Parked Minibus Taxi (Blue) -->
+    <!-- ==================== BAJAJ (Ethiopian Three-Wheeler Taxi) ==================== -->
+    <model name="bajaj_1">
+      <static>true</static>
+      <pose>6 3.5 0 0 0 0.3</pose>
+      <link name="link">
+        <!-- Main Body -->
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>2.5 1.3 1.8</size>
+            </box>
+          </geometry>
+          <pose>0 0 0.9 0 0 0</pose>
+        </collision>
+        <visual name="body">
+          <geometry>
+            <box>
+              <size>2.2 1.2 1.2</size>
+            </box>
+          </geometry>
+          <pose>0.2 0 1.0 0 0 0</pose>
+          <material>
+            <!-- Bajaj green-yellow (common in Addis) -->
+            <ambient>0.1 0.6 0.2 1</ambient>
+            <diffuse>0.15 0.7 0.25 1</diffuse>
+          </material>
+        </visual>
+        <!-- Front Hood -->
+        <visual name="front">
+          <geometry>
+            <box>
+              <size>0.8 0.8 0.8</size>
+            </box>
+          </geometry>
+          <pose>-1.0 0 0.7 0 0 0</pose>
+          <material>
+            <ambient>0.1 0.6 0.2 1</ambient>
+            <diffuse>0.15 0.7 0.25 1</diffuse>
+          </material>
+        </visual>
+        <!-- Roof -->
+        <visual name="roof">
+          <geometry>
+            <box>
+              <size>1.8 1.1 0.1</size>
+            </box>
+          </geometry>
+          <pose>0.3 0 1.65 0 0 0</pose>
+          <material>
+            <ambient>0.2 0.2 0.2 1</ambient>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- Second Bajaj -->
+    <model name="bajaj_2">
+      <static>true</static>
+      <pose>-15 -3 0 0 0 -0.5</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>2.5 1.3 1.8</size>
+            </box>
+          </geometry>
+          <pose>0 0 0.9 0 0 0</pose>
+        </collision>
+        <visual name="body">
+          <geometry>
+            <box>
+              <size>2.2 1.2 1.2</size>
+            </box>
+          </geometry>
+          <pose>0.2 0 1.0 0 0 0</pose>
+          <material>
+            <!-- Blue Bajaj variant -->
+            <ambient>0.1 0.3 0.7 1</ambient>
+            <diffuse>0.15 0.35 0.8 1</diffuse>
+          </material>
+        </visual>
+        <visual name="front">
+          <geometry>
+            <box>
+              <size>0.8 0.8 0.8</size>
+            </box>
+          </geometry>
+          <pose>-1.0 0 0.7 0 0 0</pose>
+          <material>
+            <ambient>0.1 0.3 0.7 1</ambient>
+            <diffuse>0.15 0.35 0.8 1</diffuse>
+          </material>
+        </visual>
+        <visual name="roof">
+          <geometry>
+            <box>
+              <size>1.8 1.1 0.1</size>
+            </box>
+          </geometry>
+          <pose>0.3 0 1.65 0 0 0</pose>
+          <material>
+            <ambient>0.2 0.2 0.2 1</ambient>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== PARKED MINIBUS TAXI ==================== -->
     <model name="minibus_taxi">
       <static>true</static>
       <pose>-10 3.5 0 0 0 0</pose>
@@ -455,6 +588,7 @@
           </geometry>
           <pose>0 0 0.9 0 0 0</pose>
           <material>
+            <!-- Blue and white minibus (typical Addis) -->
             <ambient>0.1 0.3 0.8 1</ambient>
             <diffuse>0.15 0.35 0.85 1</diffuse>
           </material>
@@ -473,7 +607,7 @@
       </link>
     </model>
 
-    <!-- Street Vendor Cart -->
+    <!-- ==================== STREET VENDOR CART ==================== -->
     <model name="vendor_cart">
       <static>true</static>
       <pose>5 5.5 0 0 0 0.3</pose>
@@ -486,10 +620,10 @@
           </geometry>
           <pose>0 0 0.6 0 0 0</pose>
         </collision>
-        <visual name="visual">
+        <visual name="cart">
           <geometry>
             <box>
-              <size>1.5 0.8 1.2</size>
+              <size>1.5 0.8 0.8</size>
             </box>
           </geometry>
           <pose>0 0 0.6 0 0 0</pose>
@@ -498,10 +632,78 @@
             <diffuse>0.7 0.5 0.3 1</diffuse>
           </material>
         </visual>
+        <!-- Umbrella -->
+        <visual name="umbrella">
+          <geometry>
+            <cylinder>
+              <radius>1.0</radius>
+              <length>0.05</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 1.8 0 0 0</pose>
+          <material>
+            <ambient>0.8 0.2 0.2 1</ambient>
+            <diffuse>0.9 0.25 0.25 1</diffuse>
+          </material>
+        </visual>
+        <visual name="umbrella_pole">
+          <geometry>
+            <cylinder>
+              <radius>0.02</radius>
+              <length>1.2</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 1.2 0 0 0</pose>
+          <material>
+            <ambient>0.3 0.3 0.3 1</ambient>
+          </material>
+        </visual>
       </link>
     </model>
 
-    <!-- Traffic Cone 1 -->
+    <!-- Second Vendor -->
+    <model name="vendor_cart_2">
+      <static>true</static>
+      <pose>-8 5.8 0 0 0 -0.2</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>1.2 0.6 1.0</size>
+            </box>
+          </geometry>
+          <pose>0 0 0.5 0 0 0</pose>
+        </collision>
+        <visual name="cart">
+          <geometry>
+            <box>
+              <size>1.2 0.6 0.7</size>
+            </box>
+          </geometry>
+          <pose>0 0 0.5 0 0 0</pose>
+          <material>
+            <ambient>0.5 0.5 0.3 1</ambient>
+            <diffuse>0.6 0.6 0.4 1</diffuse>
+          </material>
+        </visual>
+        <!-- Blue umbrella -->
+        <visual name="umbrella">
+          <geometry>
+            <cylinder>
+              <radius>0.8</radius>
+              <length>0.05</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 1.5 0 0 0</pose>
+          <material>
+            <ambient>0.2 0.3 0.8 1</ambient>
+            <diffuse>0.25 0.35 0.9 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== TRAFFIC CONES ==================== -->
     <model name="traffic_cone_1">
       <static>true</static>
       <pose>3 -3.5 0 0 0 0</pose>
@@ -531,7 +733,6 @@
       </link>
     </model>
 
-    <!-- Traffic Cone 2 -->
     <model name="traffic_cone_2">
       <static>true</static>
       <pose>3.5 -3 0 0 0 0</pose>
@@ -561,8 +762,37 @@
       </link>
     </model>
 
-    <!-- Pothole (Terrain Challenge) -->
-    <model name="pothole">
+    <model name="traffic_cone_3">
+      <static>true</static>
+      <pose>4 -3.5 0 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <cone>
+              <radius>0.15</radius>
+              <length>0.5</length>
+            </cone>
+          </geometry>
+          <pose>0 0 0.25 0 0 0</pose>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <cone>
+              <radius>0.15</radius>
+              <length>0.5</length>
+            </cone>
+          </geometry>
+          <pose>0 0 0.25 0 0 0</pose>
+          <material>
+            <ambient>1 0.5 0 1</ambient>
+            <diffuse>1 0.55 0.05 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== POTHOLES (Terrain Challenges) ==================== -->
+    <model name="pothole_1">
       <static>true</static>
       <pose>-3 1 -0.08 0 0 0</pose>
       <link name="link">
@@ -589,51 +819,66 @@
       </link>
     </model>
 
-    <!-- ==================== PEDESTRIAN ACTORS ==================== -->
-    <!-- Static Pedestrian 1 -->
-    <model name="pedestrian_1">
+    <model name="pothole_2">
       <static>true</static>
-      <pose>2 6.5 0 0 0 0.5</pose>
+      <pose>10 -1.5 -0.06 0 0 0</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
             <cylinder>
               <radius>0.3</radius>
-              <length>1.7</length>
+              <length>0.08</length>
             </cylinder>
           </geometry>
-          <pose>0 0 0.85 0 0 0</pose>
         </collision>
-        <visual name="body">
+        <visual name="visual">
           <geometry>
             <cylinder>
-              <radius>0.25</radius>
-              <length>1.2</length>
+              <radius>0.3</radius>
+              <length>0.08</length>
             </cylinder>
           </geometry>
-          <pose>0 0 0.8 0 0 0</pose>
           <material>
-            <ambient>0.3 0.5 0.3 1</ambient>
-          </material>
-        </visual>
-        <visual name="head">
-          <geometry>
-            <sphere>
-              <radius>0.15</radius>
-            </sphere>
-          </geometry>
-          <pose>0 0 1.55 0 0 0</pose>
-          <material>
-            <ambient>0.6 0.45 0.35 1</ambient>
+            <ambient>0.12 0.12 0.12 1</ambient>
+            <diffuse>0.08 0.08 0.08 1</diffuse>
           </material>
         </visual>
       </link>
     </model>
 
-    <!-- Static Pedestrian 2 -->
-    <model name="pedestrian_2">
+    <!-- ==================== CONSTRUCTION DEBRIS ==================== -->
+    <model name="debris_pile">
       <static>true</static>
-      <pose>-12 6.5 0 0 0 -0.3</pose>
+      <pose>12 2 0 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <box>
+              <size>1.5 1.0 0.4</size>
+            </box>
+          </geometry>
+          <pose>0 0 0.2 0 0 0</pose>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <box>
+              <size>1.5 1.0 0.4</size>
+            </box>
+          </geometry>
+          <pose>0 0 0.2 0 0 0</pose>
+          <material>
+            <ambient>0.5 0.45 0.4 1</ambient>
+            <diffuse>0.55 0.5 0.45 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== STATIC PEDESTRIANS ==================== -->
+    <!-- Standing Pedestrian 1 (waiting at bus stop) -->
+    <model name="pedestrian_standing_1">
+      <static>true</static>
+      <pose>-4 5.0 0 0 0 -1.57</pose>
       <link name="link">
         <collision name="collision">
           <geometry>
@@ -653,7 +898,8 @@
           </geometry>
           <pose>0 0 0.8 0 0 0</pose>
           <material>
-            <ambient>0.7 0.3 0.3 1</ambient>
+            <!-- Ethiopian green clothing -->
+            <ambient>0.1 0.5 0.2 1</ambient>
           </material>
         </visual>
         <visual name="head">
@@ -664,11 +910,173 @@
           </geometry>
           <pose>0 0 1.55 0 0 0</pose>
           <material>
-            <ambient>0.6 0.45 0.35 1</ambient>
+            <ambient>0.5 0.35 0.25 1</ambient>
           </material>
         </visual>
       </link>
     </model>
+
+    <!-- Standing Pedestrian 2 (near shop) -->
+    <model name="pedestrian_standing_2">
+      <static>true</static>
+      <pose>9 -8.5 0 0 0 1.57</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <cylinder>
+              <radius>0.3</radius>
+              <length>1.7</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 0.85 0 0 0</pose>
+        </collision>
+        <visual name="body">
+          <geometry>
+            <cylinder>
+              <radius>0.25</radius>
+              <length>1.2</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 0.8 0 0 0</pose>
+          <material>
+            <!-- Ethiopian yellow clothing -->
+            <ambient>0.8 0.7 0.1 1</ambient>
+          </material>
+        </visual>
+        <visual name="head">
+          <geometry>
+            <sphere>
+              <radius>0.15</radius>
+            </sphere>
+          </geometry>
+          <pose>0 0 1.55 0 0 0</pose>
+          <material>
+            <ambient>0.5 0.35 0.25 1</ambient>
+          </material>
+        </visual>
+      </link>
+    </model>
+
+    <!-- ==================== DYNAMIC PEDESTRIAN ACTORS ==================== -->
+    <!-- Walking Pedestrian 1 - North sidewalk patrol -->
+    <actor name="walking_pedestrian_1">
+      <pose>-15 6.5 1.0 0 0 0</pose>
+      <skin>
+        <filename>https://fuel.gazebosim.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
+        <scale>1.0</scale>
+      </skin>
+      <animation name="walking">
+        <filename>https://fuel.gazebosim.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
+        <scale>1.0</scale>
+        <interpolate_x>true</interpolate_x>
+      </animation>
+      <script>
+        <loop>true</loop>
+        <auto_start>true</auto_start>
+        <trajectory id="0" type="walking">
+          <waypoint>
+            <time>0</time>
+            <pose>-15 6.5 1.0 0 0 0</pose>
+          </waypoint>
+          <waypoint>
+            <time>15</time>
+            <pose>15 6.5 1.0 0 0 0</pose>
+          </waypoint>
+          <waypoint>
+            <time>16</time>
+            <pose>15 6.5 1.0 0 0 3.14</pose>
+          </waypoint>
+          <waypoint>
+            <time>31</time>
+            <pose>-15 6.5 1.0 0 0 3.14</pose>
+          </waypoint>
+          <waypoint>
+            <time>32</time>
+            <pose>-15 6.5 1.0 0 0 0</pose>
+          </waypoint>
+        </trajectory>
+      </script>
+    </actor>
+
+    <!-- Walking Pedestrian 2 - South sidewalk patrol -->
+    <actor name="walking_pedestrian_2">
+      <pose>20 -6.5 1.0 0 0 3.14</pose>
+      <skin>
+        <filename>https://fuel.gazebosim.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
+        <scale>1.0</scale>
+      </skin>
+      <animation name="walking">
+        <filename>https://fuel.gazebosim.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
+        <scale>1.0</scale>
+        <interpolate_x>true</interpolate_x>
+      </animation>
+      <script>
+        <loop>true</loop>
+        <auto_start>true</auto_start>
+        <trajectory id="0" type="walking">
+          <waypoint>
+            <time>0</time>
+            <pose>20 -6.5 1.0 0 0 3.14</pose>
+          </waypoint>
+          <waypoint>
+            <time>20</time>
+            <pose>-10 -6.5 1.0 0 0 3.14</pose>
+          </waypoint>
+          <waypoint>
+            <time>21</time>
+            <pose>-10 -6.5 1.0 0 0 0</pose>
+          </waypoint>
+          <waypoint>
+            <time>41</time>
+            <pose>20 -6.5 1.0 0 0 0</pose>
+          </waypoint>
+          <waypoint>
+            <time>42</time>
+            <pose>20 -6.5 1.0 0 0 3.14</pose>
+          </waypoint>
+        </trajectory>
+      </script>
+    </actor>
+
+    <!-- Walking Pedestrian 3 - Cross street -->
+    <actor name="walking_pedestrian_3">
+      <pose>1 -12 1.0 0 0 1.57</pose>
+      <skin>
+        <filename>https://fuel.gazebosim.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
+        <scale>1.0</scale>
+      </skin>
+      <animation name="walking">
+        <filename>https://fuel.gazebosim.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
+        <scale>1.0</scale>
+        <interpolate_x>true</interpolate_x>
+      </animation>
+      <script>
+        <loop>true</loop>
+        <auto_start>true</auto_start>
+        <trajectory id="0" type="walking">
+          <waypoint>
+            <time>0</time>
+            <pose>1 -12 1.0 0 0 1.57</pose>
+          </waypoint>
+          <waypoint>
+            <time>12</time>
+            <pose>1 12 1.0 0 0 1.57</pose>
+          </waypoint>
+          <waypoint>
+            <time>13</time>
+            <pose>1 12 1.0 0 0 -1.57</pose>
+          </waypoint>
+          <waypoint>
+            <time>25</time>
+            <pose>1 -12 1.0 0 0 -1.57</pose>
+          </waypoint>
+          <waypoint>
+            <time>26</time>
+            <pose>1 -12 1.0 0 0 1.57</pose>
+          </waypoint>
+        </trajectory>
+      </script>
+    </actor>
 
     <!-- ==================== TREES (Ethiopian Vegetation) ==================== -->
     <model name="tree_1">
@@ -749,8 +1157,160 @@
       </link>
     </model>
 
+    <model name="tree_3">
+      <static>true</static>
+      <pose>-12 -10 0 0 0 0</pose>
+      <link name="link">
+        <visual name="trunk">
+          <geometry>
+            <cylinder>
+              <radius>0.18</radius>
+              <length>2.8</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 1.4 0 0 0</pose>
+          <material>
+            <ambient>0.4 0.25 0.1 1</ambient>
+          </material>
+        </visual>
+        <visual name="canopy">
+          <geometry>
+            <sphere>
+              <radius>1.8</radius>
+            </sphere>
+          </geometry>
+          <pose>0 0 3.8 0 0 0</pose>
+          <material>
+            <ambient>0.12 0.52 0.18 1</ambient>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <cylinder>
+              <radius>0.28</radius>
+              <length>2.8</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 1.4 0 0 0</pose>
+        </collision>
+      </link>
+    </model>
+
+    <!-- ==================== TRAFFIC LIGHT ==================== -->
+    <model name="traffic_light">
+      <static>true</static>
+      <pose>4 4 0 0 0 0</pose>
+      <link name="link">
+        <!-- Pole -->
+        <visual name="pole">
+          <geometry>
+            <cylinder>
+              <radius>0.05</radius>
+              <length>3</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 1.5 0 0 0</pose>
+          <material>
+            <ambient>0.3 0.3 0.3 1</ambient>
+          </material>
+        </visual>
+        <!-- Light housing -->
+        <visual name="housing">
+          <geometry>
+            <box>
+              <size>0.3 0.3 0.8</size>
+            </box>
+          </geometry>
+          <pose>0 0 3.2 0 0 0</pose>
+          <material>
+            <ambient>0.2 0.2 0.2 1</ambient>
+          </material>
+        </visual>
+        <!-- Red light -->
+        <visual name="red_light">
+          <geometry>
+            <sphere>
+              <radius>0.08</radius>
+            </sphere>
+          </geometry>
+          <pose>0.15 0 3.45 0 0 0</pose>
+          <material>
+            <ambient>0.8 0.1 0.1 1</ambient>
+            <diffuse>0.9 0.15 0.15 1</diffuse>
+            <emissive>0.3 0.0 0.0 1</emissive>
+          </material>
+        </visual>
+        <!-- Yellow light -->
+        <visual name="yellow_light">
+          <geometry>
+            <sphere>
+              <radius>0.08</radius>
+            </sphere>
+          </geometry>
+          <pose>0.15 0 3.2 0 0 0</pose>
+          <material>
+            <ambient>0.8 0.8 0.1 1</ambient>
+            <diffuse>0.9 0.9 0.15 1</diffuse>
+          </material>
+        </visual>
+        <!-- Green light -->
+        <visual name="green_light">
+          <geometry>
+            <sphere>
+              <radius>0.08</radius>
+            </sphere>
+          </geometry>
+          <pose>0.15 0 2.95 0 0 0</pose>
+          <material>
+            <ambient>0.1 0.8 0.1 1</ambient>
+            <diffuse>0.15 0.9 0.15 1</diffuse>
+          </material>
+        </visual>
+        <collision name="collision">
+          <geometry>
+            <cylinder>
+              <radius>0.1</radius>
+              <length>3.5</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 1.75 0 0 0</pose>
+        </collision>
+      </link>
+    </model>
+
+    <!-- ==================== GARBAGE BIN ==================== -->
+    <model name="garbage_bin">
+      <static>true</static>
+      <pose>-2 6.2 0 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <cylinder>
+              <radius>0.3</radius>
+              <length>0.8</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 0.4 0 0 0</pose>
+        </collision>
+        <visual name="visual">
+          <geometry>
+            <cylinder>
+              <radius>0.3</radius>
+              <length>0.8</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 0.4 0 0 0</pose>
+          <material>
+            <ambient>0.2 0.5 0.2 1</ambient>
+            <diffuse>0.25 0.6 0.25 1</diffuse>
+          </material>
+        </visual>
+      </link>
+    </model>
+
     <!-- ==================== ROBOT SPAWN POINT ==================== -->
     <!-- The robot will spawn at the origin, on the main road -->
+    <!-- Home base location: (0, 0, 0) -->
 
   </world>
 </sdf>
