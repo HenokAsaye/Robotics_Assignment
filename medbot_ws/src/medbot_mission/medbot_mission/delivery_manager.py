@@ -1,18 +1,4 @@
 #!/usr/bin/env python3
-"""
-Delivery Manager Node
-Module Owner: Netsanet (Obstacle Avoidance) / Team Collaboration
-
-This node manages medical delivery missions for the autonomous robot.
-It handles:
-- Receiving delivery requests
-- Planning delivery routes with multiple waypoints
-- Monitoring delivery status
-- Handling delivery completion and failures
-- Coordinating with Nav2 for navigation
-
-Designed for Ethiopian healthcare delivery scenarios.
-"""
 
 import rclpy
 from rclpy.node import Node
@@ -34,9 +20,7 @@ from rclpy.timer import Timer
 import json
 import math
 
-
 class DeliveryState(Enum):
-    """Enumeration of delivery states"""
     IDLE = "idle"
     ACCEPTING = "accepting"
     EN_ROUTE_PICKUP = "en_route_pickup"
@@ -50,10 +34,8 @@ class DeliveryState(Enum):
     FAILED = "failed"
     EMERGENCY_STOP = "emergency_stop"
 
-
 @dataclass
 class DeliveryRequest:
-    """Data class for delivery request"""
     request_id: str
     pickup_location: PoseStamped
     delivery_location: PoseStamped
@@ -62,24 +44,14 @@ class DeliveryRequest:
     requester: str  # Healthcare facility name
     notes: str
 
-
 @dataclass
 class DeliveryLocation:
-    """Predefined delivery locations in Addis Ababa simulation"""
     name: str
     x: float
     y: float
     theta: float
 
-
 class DeliveryManager(Node):
-    """
-    Main delivery management node for the medical delivery robot.
-    
-    Coordinates navigation, monitors status, and manages delivery lifecycle.
-    """
-    
-    # Predefined locations in the simulation world
     LOCATIONS = {
         'hospital': DeliveryLocation('Tikur Anbessa Hospital', 18.0, 8.0, 1.57),
         'clinic': DeliveryLocation('Health Clinic', -16.0, 8.0, 1.57),
@@ -91,10 +63,8 @@ class DeliveryManager(Node):
     def __init__(self):
         super().__init__('delivery_manager')
         
-        # Callback group for concurrent callbacks
         self.callback_group = ReentrantCallbackGroup()
         
-        # Initialize state
         self.current_state = DeliveryState.IDLE
         self.current_delivery: Optional[DeliveryRequest] = None
         self.delivery_queue: List[DeliveryRequest] = []
@@ -102,11 +72,9 @@ class DeliveryManager(Node):
         self.current_pose: Optional[PoseStamped] = None
         self.is_navigation_active = False
 
-        # One-shot timer tracking (to prevent repeated callbacks)
         self._loading_timer: Optional[Timer] = None
         self._unloading_timer: Optional[Timer] = None
         
-        # Parameters
         self.declare_parameter('delivery_timeout', 300.0)  # 5 minutes
         self.declare_parameter('loading_time', 5.0)  # seconds
         self.declare_parameter('unloading_time', 5.0)  # seconds
@@ -117,7 +85,6 @@ class DeliveryManager(Node):
         self.unloading_time = self.get_parameter('unloading_time').value
         self.auto_return_home = self.get_parameter('auto_return_home').value
         
-        # Action clients for Nav2
         self.nav_to_pose_client = ActionClient(
             self, NavigateToPose, 'navigate_to_pose',
             callback_group=self.callback_group
@@ -128,7 +95,6 @@ class DeliveryManager(Node):
             callback_group=self.callback_group
         )
         
-        # Publishers
         self.state_pub = self.create_publisher(
             String, 'delivery/state', 10
         )
@@ -142,7 +108,6 @@ class DeliveryManager(Node):
             Bool, 'emergency_stop', 10
         )
         
-        # Subscribers
         self.request_sub = self.create_subscription(
             String, 'delivery/request', 
             self.delivery_request_callback, 10,
@@ -163,7 +128,6 @@ class DeliveryManager(Node):
             callback_group=self.callback_group
         )
         
-        # Timers
         self.status_timer = self.create_timer(
             1.0, self.publish_status,
             callback_group=self.callback_group
@@ -181,11 +145,9 @@ class DeliveryManager(Node):
         self.publish_state()
 
     def delivery_request_callback(self, msg: String):
-        """Handle incoming delivery requests"""
         try:
             request_data = json.loads(msg.data)
             
-            # Parse pickup location
             pickup_loc = self.LOCATIONS.get(request_data.get('pickup', 'pharmacy'))
             delivery_loc = self.LOCATIONS.get(request_data.get('delivery', 'hospital'))
             
@@ -214,7 +176,6 @@ class DeliveryManager(Node):
                 f'({request.package_type}) - Priority: {request.priority}'
             )
             
-            # Start processing if idle
             if self.current_state == DeliveryState.IDLE:
                 self.process_next_delivery()
                 
@@ -224,7 +185,6 @@ class DeliveryManager(Node):
             self.get_logger().error(f'Error processing delivery request: {e}')
 
     def process_next_delivery(self):
-        """Process the next delivery in the queue"""
         if not self.delivery_queue:
             self.get_logger().info('No pending deliveries. Robot is idle.')
             self.set_state(DeliveryState.IDLE)
@@ -237,12 +197,10 @@ class DeliveryManager(Node):
             f'Starting delivery: {self.current_delivery.request_id}'
         )
         
-        # Navigate to pickup location
         self.set_state(DeliveryState.EN_ROUTE_PICKUP)
         self.navigate_to_pose(self.current_delivery.pickup_location)
 
     def navigate_to_pose(self, pose: PoseStamped):
-        """Navigate to a specific pose using Nav2"""
         if not self.nav_to_pose_client.wait_for_server(timeout_sec=5.0):
             self.get_logger().error('Navigation action server not available!')
             self.set_state(DeliveryState.FAILED)
@@ -263,7 +221,6 @@ class DeliveryManager(Node):
         send_goal_future.add_done_callback(self.navigation_goal_response_callback)
 
     def navigation_goal_response_callback(self, future):
-        """Handle navigation goal response"""
         goal_handle = future.result()
         
         if not goal_handle.accepted:
@@ -276,7 +233,6 @@ class DeliveryManager(Node):
         result_future.add_done_callback(self.navigation_result_callback)
 
     def navigation_feedback_callback(self, feedback_msg):
-        """Handle navigation feedback"""
         feedback = feedback_msg.feedback
         distance = feedback.distance_remaining
         
@@ -284,14 +240,23 @@ class DeliveryManager(Node):
             self.get_logger().debug(f'Distance to goal: {distance:.2f}m')
 
     def navigation_result_callback(self, future):
-        """Handle navigation result"""
         self.is_navigation_active = False
-        result = future.result().result
+        
+        try:
+            action_result = future.result()
+            if action_result.result is None:
+                self.get_logger().error('Navigation action returned null result (likely preempted)')
+                self.set_state(DeliveryState.FAILED)
+                return
+            result = action_result.result
+        except Exception as e:
+            self.get_logger().error(f'Navigation action failed with exception: {e}')
+            self.set_state(DeliveryState.FAILED)
+            return
 
         if self.current_state == DeliveryState.EN_ROUTE_PICKUP:
             self.get_logger().info('Arrived at pickup location!')
             self.set_state(DeliveryState.AT_PICKUP)
-            # Simulate loading with one-shot timer
             self._loading_timer = self.create_timer(
                 self.loading_time, self._on_loading_timer,
                 callback_group=self.callback_group
@@ -300,7 +265,6 @@ class DeliveryManager(Node):
         elif self.current_state == DeliveryState.EN_ROUTE_DELIVERY:
             self.get_logger().info('Arrived at delivery location!')
             self.set_state(DeliveryState.AT_DELIVERY)
-            # Simulate unloading with one-shot timer
             self._unloading_timer = self.create_timer(
                 self.unloading_time, self._on_unloading_timer,
                 callback_group=self.callback_group
@@ -312,21 +276,18 @@ class DeliveryManager(Node):
             self.process_next_delivery()
 
     def _on_loading_timer(self):
-        """One-shot timer callback for loading - cancels itself after first call"""
         if self._loading_timer is not None:
             self._loading_timer.cancel()
             self._loading_timer = None
         self.loading_complete()
 
     def _on_unloading_timer(self):
-        """One-shot timer callback for unloading - cancels itself after first call"""
         if self._unloading_timer is not None:
             self._unloading_timer.cancel()
             self._unloading_timer = None
         self.unloading_complete()
 
     def loading_complete(self):
-        """Called when loading is complete"""
         if self.current_state != DeliveryState.AT_PICKUP:
             return
             
@@ -335,7 +296,6 @@ class DeliveryManager(Node):
         self.navigate_to_pose(self.current_delivery.delivery_location)
 
     def unloading_complete(self):
-        """Called when unloading is complete"""
         if self.current_state != DeliveryState.AT_DELIVERY:
             return
             
@@ -346,18 +306,15 @@ class DeliveryManager(Node):
         self.set_state(DeliveryState.COMPLETED)
         self.current_delivery = None
         
-        # Process next delivery or return home
         self.process_next_delivery()
 
     def return_to_home(self):
-        """Return to home base"""
         if self.current_state not in [DeliveryState.IDLE, DeliveryState.COMPLETED]:
             return
             
         home = self.LOCATIONS['home_base']
         home_pose = self.create_pose_stamped(home.x, home.y, home.theta)
         
-        # Check if already at home
         if self.current_pose:
             dist = math.sqrt(
                 (self.current_pose.pose.position.x - home.x)**2 +
@@ -372,55 +329,45 @@ class DeliveryManager(Node):
         self.navigate_to_pose(home_pose)
 
     def cancel_callback(self, msg: String):
-        """Handle delivery cancellation"""
         request_id = msg.data
         
-        # Check if it's the current delivery
         if self.current_delivery and self.current_delivery.request_id == request_id:
             self.get_logger().warn(f'Cancelling current delivery: {request_id}')
-            # Cancel navigation if active
             self.set_state(DeliveryState.IDLE)
             self.current_delivery = None
             self.process_next_delivery()
         else:
-            # Remove from queue
             self.delivery_queue = [
                 d for d in self.delivery_queue if d.request_id != request_id
             ]
             self.get_logger().info(f'Removed delivery {request_id} from queue')
 
     def emergency_callback(self, msg: Bool):
-        """Handle emergency stop"""
         if msg.data:
             self.get_logger().error('EMERGENCY STOP ACTIVATED!')
             self.set_state(DeliveryState.EMERGENCY_STOP)
-            # Publish emergency stop to robot
             self.emergency_pub.publish(Bool(data=True))
         else:
             self.get_logger().info('Emergency stop released.')
             self.set_state(DeliveryState.IDLE)
 
     def odom_callback(self, msg: Odometry):
-        """Update current pose from odometry"""
         self.current_pose = PoseStamped()
         self.current_pose.header = msg.header
         self.current_pose.pose = msg.pose.pose
 
     def set_state(self, new_state: DeliveryState):
-        """Update delivery state"""
         old_state = self.current_state
         self.current_state = new_state
         self.get_logger().info(f'State: {old_state.value} -> {new_state.value}')
         self.publish_state()
 
     def publish_state(self):
-        """Publish current state"""
         state_msg = String()
         state_msg.data = self.current_state.value
         self.state_pub.publish(state_msg)
 
     def publish_status(self):
-        """Publish detailed status"""
         status = {
             'state': self.current_state.value,
             'queue_length': len(self.delivery_queue),
@@ -440,10 +387,8 @@ class DeliveryManager(Node):
         self.status_pub.publish(status_msg)
 
     def publish_markers(self):
-        """Publish visualization markers for RViz"""
         markers = MarkerArray()
         
-        # Publish location markers
         for i, (name, loc) in enumerate(self.LOCATIONS.items()):
             marker = Marker()
             marker.header.frame_id = 'map'
@@ -459,7 +404,6 @@ class DeliveryManager(Node):
             marker.scale.y = 0.5
             marker.scale.z = 1.0
             
-            # Color based on location type
             if 'hospital' in name:
                 marker.color.r, marker.color.g, marker.color.b = 1.0, 0.0, 0.0
             elif 'clinic' in name:
@@ -472,7 +416,6 @@ class DeliveryManager(Node):
             
             markers.markers.append(marker)
             
-            # Text label
             text_marker = Marker()
             text_marker.header = marker.header
             text_marker.ns = 'delivery_labels'
@@ -494,7 +437,6 @@ class DeliveryManager(Node):
         self.marker_pub.publish(markers)
 
     def create_pose_stamped(self, x: float, y: float, theta: float) -> PoseStamped:
-        """Create a PoseStamped message"""
         pose = PoseStamped()
         pose.header.frame_id = 'map'
         pose.header.stamp = self.get_clock().now().to_msg()
@@ -502,14 +444,12 @@ class DeliveryManager(Node):
         pose.pose.position.y = y
         pose.pose.position.z = 0.0
         
-        # Convert theta to quaternion
         pose.pose.orientation.x = 0.0
         pose.pose.orientation.y = 0.0
         pose.pose.orientation.z = math.sin(theta / 2)
         pose.pose.orientation.w = math.cos(theta / 2)
         
         return pose
-
 
 def main(args=None):
     rclpy.init(args=args)
@@ -526,7 +466,6 @@ def main(args=None):
     finally:
         delivery_manager.destroy_node()
         rclpy.shutdown()
-
 
 if __name__ == '__main__':
     main()

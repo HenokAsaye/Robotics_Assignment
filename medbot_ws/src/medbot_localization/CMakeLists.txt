@@ -7,6 +7,12 @@ endif()
 
 find_package(ament_cmake REQUIRED)
 
+# Install Python executables
+install(PROGRAMS
+  medbot_localization/odom_tf_broadcaster.py
+  DESTINATION lib/${PROJECT_NAME}
+)
+
 # Install configuration and launch files
 install(DIRECTORY
   config

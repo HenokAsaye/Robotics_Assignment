@@ -31,7 +31,7 @@ def generate_launch_description():
             description='Use simulation time'
         ),
 
-        # EKF Node
+        # EKF Node (publishes /odom odometry message)
         Node(
             package='robot_localization',
             executable='ekf_node',
@@ -40,9 +40,16 @@ def generate_launch_description():
             parameters=[
                 ekf_params,
                 {'use_sim_time': use_sim_time}
-            ],
-            remappings=[
-                ('odometry/filtered', 'odom_filtered')
             ]
+        ),
+
+        # Temporary: Static transform for odom->base_footprint
+        # This will be replaced by dynamic transform from EKF once it starts publishing odometry
+        Node(
+            package='tf2_ros',
+            executable='static_transform_publisher',
+            name='odom_static_transform',
+            output='screen',
+            arguments=['0', '0', '0', '0', '0', '0', 'odom', 'base_footprint']
         ),
     ])

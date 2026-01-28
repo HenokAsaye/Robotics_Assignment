@@ -10,6 +10,8 @@ Usage:
     ros2 launch medbot_bringup medbot_bringup.launch.py
     ros2 launch medbot_bringup medbot_bringup.launch.py slam:=false  # Use pre-built map
     ros2 launch medbot_bringup medbot_bringup.launch.py mission:=false  # Without mission control
+    ros2 launch medbot_bringup medbot_bringup.launch.py engine:=harmonic  # Use new Gazebo (default)
+    ros2 launch medbot_bringup medbot_bringup.launch.py engine:=classic  # Use Gazebo Classic (if needed)
 """
 
 import os
@@ -38,12 +40,14 @@ def generate_launch_description():
     mission = LaunchConfiguration('mission', default='true')
     ekf = LaunchConfiguration('ekf', default='true')
     world = LaunchConfiguration('world')
+    headless = LaunchConfiguration('headless', default='false')  # New parameter
+    engine = LaunchConfiguration('engine', default='harmonic')  # harmonic or classic
 
     # Default world file
     default_world = os.path.join(
         get_package_share_directory('medbot_gazebo'),
         'worlds',
-        'simple_urban.world'
+        'addis_ababa_urban.world'
     )
 
     # RViz config
@@ -89,11 +93,21 @@ def generate_launch_description():
             default_value='true',
             description='Launch EKF for sensor fusion (odometry + IMU)'
         ),
+        DeclareLaunchArgument(
+            'headless',
+            default_value='false',
+            description='Run Gazebo in headless mode (no GUI). Use if GUI crashes.'
+        ),
+        DeclareLaunchArgument(
+            'engine',
+            default_value='harmonic',
+            description='Gazebo engine: "harmonic" (new, default) or "classic" (deprecated)'
+        ),
 
-        # ==================== GAZEBO SIMULATION ====================
+        # ==================== GAZEBO SIMULATION (Harmonic - NEW, Default) ====================
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
-                os.path.join(pkg_gazebo, 'launch', 'gazebo_simulation.launch.py')
+                os.path.join(pkg_gazebo, 'launch', 'gazebo_harmonic.launch.py')
             ),
             launch_arguments={
                 'use_sim_time': use_sim_time,

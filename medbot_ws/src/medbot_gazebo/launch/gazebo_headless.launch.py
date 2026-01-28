@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Gazebo Simulation Launch File
-Launches Gazebo with the Ethiopian urban world and spawns the robot.
+Headless Gazebo Launch (without GUI rendering)
+Use this if Gazebo GUI crashes due to graphics/Wayland issues.
 """
 
 import os
@@ -74,21 +74,13 @@ def generate_launch_description():
             description='Robot initial Z position'
         ),
 
-        # Launch Gazebo server
+        # Launch Gazebo server ONLY (headless, no GUI)
         IncludeLaunchDescription(
             PythonLaunchDescriptionSource(
                 os.path.join(pkg_gazebo_ros, 'launch', 'gzserver.launch.py')
             ),
             launch_arguments={'world': world}.items()
         ),
-
-        # Launch Gazebo client - DISABLED FOR DEBUGGING
-        # Uncomment when rendering issues are resolved
-        # IncludeLaunchDescription(
-        #     PythonLaunchDescriptionSource(
-        #         os.path.join(pkg_gazebo_ros, 'launch', 'gzclient.launch.py')
-        #     )
-        # ),
 
         # Robot State Publisher
         Node(

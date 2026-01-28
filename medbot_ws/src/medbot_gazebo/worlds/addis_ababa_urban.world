@@ -22,7 +22,7 @@
       <max_step_size>0.001</max_step_size>
       <real_time_factor>1</real_time_factor>
       <real_time_update_rate>1000</real_time_update_rate>
-      <gravity>0 0 -9.81</gravity>
+      <gravity xyz="0 0 -9.81"/>
     </physics>
 
     <!-- ==================== SCENE ==================== -->
@@ -957,126 +957,128 @@
       </link>
     </model>
 
-    <!-- ==================== DYNAMIC PEDESTRIAN ACTORS ==================== -->
-    <!-- Walking Pedestrian 1 - North sidewalk patrol -->
-    <actor name="walking_pedestrian_1">
-      <pose>-15 6.5 1.0 0 0 0</pose>
-      <skin>
-        <filename>https://fuel.gazebosim.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
-        <scale>1.0</scale>
-      </skin>
-      <animation name="walking">
-        <filename>https://fuel.gazebosim.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
-        <scale>1.0</scale>
-        <interpolate_x>true</interpolate_x>
-      </animation>
-      <script>
-        <loop>true</loop>
-        <auto_start>true</auto_start>
-        <trajectory id="0" type="walking">
-          <waypoint>
-            <time>0</time>
-            <pose>-15 6.5 1.0 0 0 0</pose>
-          </waypoint>
-          <waypoint>
-            <time>15</time>
-            <pose>15 6.5 1.0 0 0 0</pose>
-          </waypoint>
-          <waypoint>
-            <time>16</time>
-            <pose>15 6.5 1.0 0 0 3.14</pose>
-          </waypoint>
-          <waypoint>
-            <time>31</time>
-            <pose>-15 6.5 1.0 0 0 3.14</pose>
-          </waypoint>
-          <waypoint>
-            <time>32</time>
-            <pose>-15 6.5 1.0 0 0 0</pose>
-          </waypoint>
-        </trajectory>
-      </script>
-    </actor>
+    <!-- ==================== ADDITIONAL STATIC PEDESTRIANS ==================== -->
+    <!-- (Dynamic actors removed for Gazebo Classic compatibility) -->
+    
+    <!-- Walking Pedestrian 1 - North sidewalk (static representation) -->
+    <model name="pedestrian_walking_1">
+      <static>true</static>
+      <pose>0 6.5 0 0 0 0</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <cylinder>
+              <radius>0.3</radius>
+              <length>1.7</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 0.85 0 0 0</pose>
+        </collision>
+        <visual name="body">
+          <geometry>
+            <cylinder>
+              <radius>0.25</radius>
+              <length>1.2</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 0.8 0 0 0</pose>
+          <material>
+            <ambient>0.7 0.3 0.3 1</ambient>
+          </material>
+        </visual>
+        <visual name="head">
+          <geometry>
+            <sphere>
+              <radius>0.15</radius>
+            </sphere>
+          </geometry>
+          <pose>0 0 1.55 0 0 0</pose>
+          <material>
+            <ambient>0.5 0.35 0.25 1</ambient>
+          </material>
+        </visual>
+      </link>
+    </model>
 
-    <!-- Walking Pedestrian 2 - South sidewalk patrol -->
-    <actor name="walking_pedestrian_2">
-      <pose>20 -6.5 1.0 0 0 3.14</pose>
-      <skin>
-        <filename>https://fuel.gazebosim.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
-        <scale>1.0</scale>
-      </skin>
-      <animation name="walking">
-        <filename>https://fuel.gazebosim.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
-        <scale>1.0</scale>
-        <interpolate_x>true</interpolate_x>
-      </animation>
-      <script>
-        <loop>true</loop>
-        <auto_start>true</auto_start>
-        <trajectory id="0" type="walking">
-          <waypoint>
-            <time>0</time>
-            <pose>20 -6.5 1.0 0 0 3.14</pose>
-          </waypoint>
-          <waypoint>
-            <time>20</time>
-            <pose>-10 -6.5 1.0 0 0 3.14</pose>
-          </waypoint>
-          <waypoint>
-            <time>21</time>
-            <pose>-10 -6.5 1.0 0 0 0</pose>
-          </waypoint>
-          <waypoint>
-            <time>41</time>
-            <pose>20 -6.5 1.0 0 0 0</pose>
-          </waypoint>
-          <waypoint>
-            <time>42</time>
-            <pose>20 -6.5 1.0 0 0 3.14</pose>
-          </waypoint>
-        </trajectory>
-      </script>
-    </actor>
+    <!-- Walking Pedestrian 2 - South sidewalk (static representation) -->
+    <model name="pedestrian_walking_2">
+      <static>true</static>
+      <pose>10 -6.5 0 0 0 3.14</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <cylinder>
+              <radius>0.3</radius>
+              <length>1.7</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 0.85 0 0 0</pose>
+        </collision>
+        <visual name="body">
+          <geometry>
+            <cylinder>
+              <radius>0.25</radius>
+              <length>1.2</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 0.8 0 0 0</pose>
+          <material>
+            <ambient>0.3 0.3 0.7 1</ambient>
+          </material>
+        </visual>
+        <visual name="head">
+          <geometry>
+            <sphere>
+              <radius>0.15</radius>
+            </sphere>
+          </geometry>
+          <pose>0 0 1.55 0 0 0</pose>
+          <material>
+            <ambient>0.5 0.35 0.25 1</ambient>
+          </material>
+        </visual>
+      </link>
+    </model>
 
-    <!-- Walking Pedestrian 3 - Cross street -->
-    <actor name="walking_pedestrian_3">
-      <pose>1 -12 1.0 0 0 1.57</pose>
-      <skin>
-        <filename>https://fuel.gazebosim.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
-        <scale>1.0</scale>
-      </skin>
-      <animation name="walking">
-        <filename>https://fuel.gazebosim.org/1.0/Mingfei/models/actor/tip/files/meshes/walk.dae</filename>
-        <scale>1.0</scale>
-        <interpolate_x>true</interpolate_x>
-      </animation>
-      <script>
-        <loop>true</loop>
-        <auto_start>true</auto_start>
-        <trajectory id="0" type="walking">
-          <waypoint>
-            <time>0</time>
-            <pose>1 -12 1.0 0 0 1.57</pose>
-          </waypoint>
-          <waypoint>
-            <time>12</time>
-            <pose>1 12 1.0 0 0 1.57</pose>
-          </waypoint>
-          <waypoint>
-            <time>13</time>
-            <pose>1 12 1.0 0 0 -1.57</pose>
-          </waypoint>
-          <waypoint>
-            <time>25</time>
-            <pose>1 -12 1.0 0 0 -1.57</pose>
-          </waypoint>
-          <waypoint>
-            <time>26</time>
-            <pose>1 -12 1.0 0 0 1.57</pose>
-          </waypoint>
-        </trajectory>
-      </script>
-    </actor>
+    <!-- Walking Pedestrian 3 - Cross street (static representation) -->
+    <model name="pedestrian_walking_3">
+      <static>true</static>
+      <pose>1 0 0 0 0 1.57</pose>
+      <link name="link">
+        <collision name="collision">
+          <geometry>
+            <cylinder>
+              <radius>0.3</radius>
+              <length>1.7</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 0.85 0 0 0</pose>
+        </collision>
+        <visual name="body">
+          <geometry>
+            <cylinder>
+              <radius>0.25</radius>
+              <length>1.2</length>
+            </cylinder>
+          </geometry>
+          <pose>0 0 0.8 0 0 0</pose>
+          <material>
+            <ambient>0.6 0.5 0.2 1</ambient>
+          </material>
+        </visual>
+        <visual name="head">
+          <geometry>
+            <sphere>
+              <radius>0.15</radius>
+            </sphere>
+          </geometry>
+          <pose>0 0 1.55 0 0 0</pose>
+          <material>
+            <ambient>0.5 0.35 0.25 1</ambient>
+          </material>
+        </visual>
+      </link>
+    </model>
 
     <!-- ==================== TREES (Ethiopian Vegetation) ==================== -->
     <model name="tree_1">
